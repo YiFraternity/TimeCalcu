@@ -127,12 +127,12 @@ public class TimeCalcu {
 			PackageTime[] timelistsort = tc.timeSort(timelist);        //将timelist按照时间先后进行排序
 			ArrayList<PackageTime> changetime = tc.getTimeofNeedCalcu(timelistsort);//读取变化的时间点
 			String[] content=new String[7];
-			int QN=0; String SN="";
-			for(int j=0;j<changetime.size();j=j+2) {
-				PackageTime activityAAT= changetime.get(j);
-				PackageTime answerAAT = changetime.get(j+1);
-				QN = activityAAT.getQN();
-				SN = activityAAT.getSN();
+			int QN=0; String SN="";int TAG;
+			for(int j=0;j<changetime.size();j=j+1) {
+				PackageTime thisTime= changetime.get(j);
+				QN = thisTime.getQN();
+				SN = thisTime.getSN();
+				TAG= thisTime.getTag();
 				String actTIME = activityAAT.getTime();
 				String ansTIME = answerAAT.getTime();
 				long timeDifference = timeObject.getTimeDifference(ansTIME, actTIME);
@@ -150,6 +150,4 @@ public class TimeCalcu {
 		}
 		getAMV(4, filename);
 	}
-	
-	
 }

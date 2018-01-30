@@ -3,6 +3,7 @@ package com.timedifference;
 import java.util.ArrayList;
 
 import com.publicPackage.OperateFile;
+import com.publicPackage.StuNumClassify;
 import com.publicPackage.Time;
 
 public class Activity {
@@ -69,29 +70,20 @@ public class Activity {
 	}
 	
 	/****
-	 * @comments 获得与答案相匹配的ActivityLog
-	 *           从Activity-Log文件中读取与arrANS数据相同学生序号和题号相同的数据
-	 *           将数据封装成GetAATime类，然后添加数list中
-	 * @param aat
-	 * @param arrANS
+	 * @comments 从Activity-History文件中找到与aarAns数据相同的序号和题目
+	 *           将这些数据封装成GetAATime对象，添加到aat中
+	 * @param aat <存放GetAATime对象>
+	 * @param arrACT <答案数据的数组>
+	 * @param csvlist <存放CSV文件中的数据>
 	 */
-	protected void getACTLogWithANS(ArrayList<PackageTime>aat,String[] arrANS,ArrayList<ArrayList<String[]>> ACTarrange) {
-		String SNofANS = arrANS[0];                  //答案里的学生序号
-        int QNofANS = Integer.parseInt(arrANS[1]);   //答案数组里题号
-        for(int i=0;i<ACTarrange.size();i++) {       //ACTarrange.size()代表有多少学生
-        	ArrayList<String[]> arrEachSTUACT = new ArrayList<String[]>();
-        	arrEachSTUACT = ACTarrange.get(i);       //每位学生Activity记录
-        	String SNofACT=arrEachSTUACT.get(0)[0];  //获取Activity里学生序号 	
-        	if(SNofACT.equals(SNofANS)) {          //若答案里的学生序号与活动学生序号匹配
-        		for(int j=0;j<arrEachSTUACT.size();j++) {
-        			String[] arrACT = arrEachSTUACT.get(j);
-        			int QNofACT = Integer.parseInt(arrACT[1]);
-        			if(QNofANS == QNofACT) {
-        				PackageTime getACTLog = getRecord(0,arrACT);
-        				aat.add(getACTLog);
-        			}
-        		}
-        	}
-        }
+	protected void getACTlist(ArrayList<PackageTime>aat,String[] arrACT,ArrayList<String[]>csvlist) {
+		StuNumClassify snc = new StuNumClassify();
+        ArrayList<String[]>Answer = new ArrayList<String[]>();
+        Answer = snc.getSQClassfiy(csvlist, arrACT);
+		for(int i=0;i<Answer.size();i++) {
+			String[] eachAnswer = Answer.get(i);
+			PackageTime answerAA = getRecord(1,eachAnswer);
+			aat.add(answerAA);
+		}
 	}
 }

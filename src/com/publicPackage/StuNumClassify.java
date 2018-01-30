@@ -102,7 +102,7 @@ public class StuNumClassify {
 	/****
 	 * @comments 将学生和问题进行归类，同一个学生且同一道题目则放到一个list，将这list返回
 	 * @param csvlist <存放CSV数据>
-	 * @param arrSource <需要查找源数据的数组>
+	 * @param arrSource <需要查找原数据的数组>
 	 * @return 学生和问题归类后的结果
 	 */
 	public ArrayList<String[]> getSQClassfiy(ArrayList<String[]>csvlist,String[] arrSource){
@@ -168,7 +168,6 @@ public class StuNumClassify {
         			opfl.writeToFile(strResult[t]+" ", strWriteFile);
         		}
         		System.out.println();
-        		
     			opfl.writeToFile("\n", strWriteFile);
         	}
         }

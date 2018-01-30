@@ -137,7 +137,6 @@ public class OperateFile {
 		}
 	}
 	
-	
 	//方法测试  
     public static void main(String[] args){  
     	OperateFile opfl = new OperateFile();

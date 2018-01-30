@@ -69,30 +69,29 @@ public class Notes {
 	}	
 	
 	/****
-	 * @comments 获得与答案相匹配的NotesLog
-	 *           从Notes-log文件中读取与arrANS数据相同学生序号和题号相同的数据
-	 *           将数据封装成GetAATime类，然后添加数list中
+	 * @comments 获得与Activity相匹配的NotesLog
+	 *           从Notes-log文件中读取与arrACT数据相同学生序号和题号相同的数据
+	 *           将数据封装成PackTime类，然后添加数list中
 	 * @param aat
-	 * @param arrANS
+	 * @param arrACT
 	 * @param noteArranage
 	 */
-	protected void getNotelogWithANS(ArrayList<PackageTime>aat,String[] arrANS,ArrayList<ArrayList<String[]>>noteArranage) {
-        String SNofANS = arrANS[0];                  //答案里的学生序号
-        int QNofANS = Integer.parseInt(arrANS[1]);   //答案数组里题号
+	protected void getNotelogWithACT(ArrayList<PackageTime>aat,String[] arrACT,ArrayList<ArrayList<String[]>>noteArranage) {
+        String SNofACT = arrACT[0];                    //Activity里的学生序号
+        int QNofACT = Integer.parseInt(arrACT[1]);     //Activity数组里题号
         for(int i=0;i<noteArranage.size();i++) {       //noteArranage.size()代表有多少学生
         	ArrayList<String[]> eachStudentNotes = new ArrayList<String[]>();
         	eachStudentNotes = noteArranage.get(i);    //每位学生Notes记录
-        	String SNofACT=eachStudentNotes.get(0)[0]; //获取Notes里学生序号 	
-        	if(SNofACT.equals(SNofANS)) {          //若答案里的学生序号与notes学生序号匹配
+        	String SNofNote=eachStudentNotes.get(0)[0];//获取Notes里学生序号 	
+        	if(SNofNote.equals(SNofACT))               //若Activity里的学生序号与notes学生序号匹配
         		for(int j=0;j<eachStudentNotes.size();j++) {
-        			String[] arrACT = eachStudentNotes.get(j);
-        			int QNofACT = Integer.parseInt(arrACT[1]);
-        			if(QNofANS == QNofACT) {
-        				PackageTime getACTLog = getRecord(2,arrACT);
-        				aat.add(getACTLog);
+        			String[] arrNote = eachStudentNotes.get(j);
+        			int QNofNote = Integer.parseInt(arrNote[1]);
+        			if(QNofNote == QNofACT) {
+        				PackageTime getNoteLog = getRecord(2,arrNote);
+        				aat.add(getNoteLog);
         			}
         		}
-        	}
         }
 	}
 	

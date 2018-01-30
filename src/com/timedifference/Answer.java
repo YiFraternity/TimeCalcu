@@ -70,22 +70,29 @@ public class Answer {
 	}
 	
 	/****
-	 * @comments 从Answer-History文件中找到与aarAns数据相同的序号和题目
-	 *           将这些数据封装成GetAATime对象，添加到aat中
-	 * @param aat <存放GetAATime对象>
-	 * @param arrANS <答案数据的数组>
-	 * @param csvlist <存放CSV文件中的数据>
+	 * @comments 获得与Activity相匹配的answer-Log
+	 *           从ANS-log文件中读取与arrACT数据相同学生序号和题号相同的数据
+	 *           将数据封装成PackTime类，然后添加数list中
+	 * @param aat
+	 * @param arrACT
+	 * @param ANSArranage
 	 */
-	protected void getANSlist(ArrayList<PackageTime>aat,String[] arrANS,ArrayList<String[]>csvlist) {
-		StuNumClassify snc = new StuNumClassify();
-        ArrayList<String[]>Answer = new ArrayList<String[]>();
-        Answer = snc.getSQClassfiy(csvlist, arrANS);
-		for(int i=0;i<Answer.size();i++) {
-			String[] eachAnswer = Answer.get(i);
-			PackageTime answerAA = getRecord(1,eachAnswer);
-			aat.add(answerAA);
-		}
+	protected void getANSlogWithACT(ArrayList<PackageTime>aat,String[] arrACT,ArrayList<ArrayList<String[]>>ANSArranage) {
+        String SNofACT = arrACT[0];                    //Activity里的学生序号
+        int QNofACT = Integer.parseInt(arrACT[1]);     //Activity数组里题号
+        for(int i=0;i<ANSArranage.size();i++) {       //ANSArranage.size()代表有多少学生
+        	ArrayList<String[]> eachStudentANS = new ArrayList<String[]>();
+        	eachStudentANS = ANSArranage.get(i);    //每位学生ANS记录
+        	String SNofNote=eachStudentANS.get(0)[0];//获取ANS里学生序号 	
+        	if(SNofNote.equals(SNofACT))               //若Activity里的学生序号与Answer学生序号匹配
+        		for(int j=0;j<eachStudentANS.size();j++) {
+        			String[] arrNote = eachStudentANS.get(j);
+        			int QNofNote = Integer.parseInt(arrNote[1]);
+        			if(QNofNote == QNofACT) {
+        				PackageTime getNoteLog = getRecord(2,arrNote);
+        				aat.add(getNoteLog);
+        			}
+        		}
+        }
 	}
-	
-	
 }

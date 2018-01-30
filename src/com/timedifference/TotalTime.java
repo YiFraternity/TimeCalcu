@@ -50,6 +50,5 @@ public class TotalTime {
 			contents = tt.getIndexArray(eachsn, tdcsv);
 			opfl.writeFileToCsv(contents, eachstudent);
 		}
-		
 	}
 }
