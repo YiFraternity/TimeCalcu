@@ -23,6 +23,26 @@ public class Answer {
         return arrResult;
 	}
 	
+	/****
+	 * @comments 将数据封装到类中
+	 * @param TAG
+	 * @param record
+	 * @return 封装的时间信息
+	 */
+	protected PackageTime getRecord(int TAG,String[]record) {
+		Time timeObject = new Time();
+		String SN = record[0];
+		int QN = Integer.parseInt(record[1]);
+		String TIME=null;
+		if(TAG == 0) {
+			TIME = timeObject.parseActivityDateTime(record);
+		}else if(TAG == 1)
+		{
+			TIME = timeObject.parseAnswerDateTime(record);
+		}
+		PackageTime aa = new PackageTime(TAG,SN,QN,TIME);
+		return aa;
+	}
 	
 	/****
 	 * @comments 过滤Answer时间，得到5/5-6/18的Answer
@@ -48,40 +68,6 @@ public class Answer {
 		t=null;
 		return result;
 	}
-	/****
-	 * @comments 根据时间先后，对其进行排序
-	 * @param aat
-	 * @return 顺序从小到大一次排列
-	 */
-	protected GetAATime[] timeSort(ArrayList<GetAATime> aat) {
-		Time timeObject = new Time();
-		int length = aat.size();
-		GetAATime[] aaResult = new GetAATime[length];
-		int i=0;
-		while(aat.size()>0&&i<length) {
-			GetAATime minAA = aat.get(0);
-			String strTime = minAA.getTime();     //将动态数组的第一个作为最小值
-			long minTime = timeObject.timeTolong(strTime);
-			for(int j=1;j<aat.size();j++) {
-				GetAATime aa = aat.get(j);
-				String time = aa.getTime();
-				long lTime = timeObject.timeTolong(time);
-				if(minTime>lTime) {    //获得时间最小值
-					minAA = aa;
-					minTime=lTime;
-				}
-			}
-			aaResult[i]=minAA;
-			aat.remove(minAA);
-			i++;
-		}
-		aat=null;
-		return aaResult;
-	}
-	
-		
-	
-	
 	
 	/****
 	 * @comments 从Answer-History文件中找到与aarAns数据相同的序号和题目
@@ -90,13 +76,13 @@ public class Answer {
 	 * @param arrANS <答案数据的数组>
 	 * @param csvlist <存放CSV文件中的数据>
 	 */
-	protected void getANSlist(ArrayList<GetAATime>aat,String[] arrANS,ArrayList<String[]>csvlist) {
+	protected void getANSlist(ArrayList<PackageTime>aat,String[] arrANS,ArrayList<String[]>csvlist) {
 		StuNumClassify snc = new StuNumClassify();
         ArrayList<String[]>Answer = new ArrayList<String[]>();
         Answer = snc.getSQClassfiy(csvlist, arrANS);
 		for(int i=0;i<Answer.size();i++) {
 			String[] eachAnswer = Answer.get(i);
-			GetAATime answerAA = getRecord(1,eachAnswer);
+			PackageTime answerAA = getRecord(1,eachAnswer);
 			aat.add(answerAA);
 		}
 	}

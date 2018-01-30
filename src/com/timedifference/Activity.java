@@ -7,6 +7,7 @@ import com.publicPackage.Time;
 
 public class Activity {
 
+	public Activity() {}
 	/****
 	 * @comments 获取Activity日志里的数据，将数据存放在list中，返回
 	 * @return 存放Activity日志的list
@@ -47,25 +48,46 @@ public class Activity {
 	}
 	
 	/****
+	 * @comments 将数据封装到类中
+	 * @param TAG
+	 * @param record
+	 * @return 封装的时间信息
+	 */
+	protected PackageTime getRecord(int TAG,String[]record) {
+		Time timeObject = new Time();
+		String SN = record[0];
+		int QN = Integer.parseInt(record[1]);
+		String TIME=null;
+		if(TAG == 0) {
+			TIME = timeObject.parseActivityDateTime(record);
+		}else if(TAG == 1)
+		{
+			TIME = timeObject.parseAnswerDateTime(record);
+		}
+		PackageTime aa = new PackageTime(TAG,SN,QN,TIME);
+		return aa;
+	}
+	
+	/****
 	 * @comments 获得与答案相匹配的ActivityLog
 	 *           从Activity-Log文件中读取与arrANS数据相同学生序号和题号相同的数据
 	 *           将数据封装成GetAATime类，然后添加数list中
 	 * @param aat
 	 * @param arrANS
 	 */
-	protected void getACTLogWithANS(ArrayList<GetAATime>aat,String[] arrANS,ArrayList<ArrayList<String[]>> ACTarrange) {
-        String SNofANS = arrANS[0];                  //答案里的学生序号
+	protected void getACTLogWithANS(ArrayList<PackageTime>aat,String[] arrANS,ArrayList<ArrayList<String[]>> ACTarrange) {
+		String SNofANS = arrANS[0];                  //答案里的学生序号
         int QNofANS = Integer.parseInt(arrANS[1]);   //答案数组里题号
         for(int i=0;i<ACTarrange.size();i++) {       //ACTarrange.size()代表有多少学生
         	ArrayList<String[]> arrEachSTUACT = new ArrayList<String[]>();
         	arrEachSTUACT = ACTarrange.get(i);       //每位学生Activity记录
         	String SNofACT=arrEachSTUACT.get(0)[0];  //获取Activity里学生序号 	
-        	if((SNofACT.equals(SNofANS))) {          //若答案里的学生序号与活动学生序号匹配
+        	if(SNofACT.equals(SNofANS)) {          //若答案里的学生序号与活动学生序号匹配
         		for(int j=0;j<arrEachSTUACT.size();j++) {
         			String[] arrACT = arrEachSTUACT.get(j);
         			int QNofACT = Integer.parseInt(arrACT[1]);
         			if(QNofANS == QNofACT) {
-        				GetAATime getACTLog = getRecord(0,arrACT);
+        				PackageTime getACTLog = getRecord(0,arrACT);
         				aat.add(getACTLog);
         			}
         		}

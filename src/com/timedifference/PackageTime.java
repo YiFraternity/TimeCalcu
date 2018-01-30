@@ -6,9 +6,9 @@ package com.timedifference;
  * @version 1.0.0
  * @author lyh
  */
-public class GetAATime {
+public class PackageTime {
 
-	public GetAATime() {};
+	public PackageTime() {};
 	private int tag;   //用作标记
 	private int qN;    //题号
 	private String strSN; //学生序号
@@ -20,7 +20,7 @@ public class GetAATime {
 	 * @param QN
 	 * @param Time
 	 */
-	public GetAATime(int Tag,String SN,int QN,String Time) {
+	public PackageTime(int Tag,String SN,int QN,String Time) {
 		super();
 		this.tag=Tag;
 		this.strSN=SN;
