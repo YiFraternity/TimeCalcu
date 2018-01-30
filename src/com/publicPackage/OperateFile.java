@@ -1,12 +1,16 @@
 package com.publicPackage;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import com.csvreader.CsvReader;
+import com.csvreader.CsvWriter;
 
 public class OperateFile {
 
@@ -43,7 +47,35 @@ public class OperateFile {
 		}
 		return csvList;
 	}
-	
+	/****
+	 * @comments 读取CSV文件指定列的所有值
+	 * @param index
+	 * @param file
+	 * @return 
+	 */
+	public ArrayList<Long> readIndexColumn(int index,String file) {
+		ArrayList<String[]>csvList = new ArrayList<String[]>();
+		ArrayList<Long> value = new ArrayList<Long>();
+		try {
+	        if (isCsv(file)) { 
+	            CsvReader reader = new CsvReader(file, ',', Charset.forName("utf8"));    
+	            reader.readHeaders(); // 跳过表头   如果需要表头的话，不要写这句。  
+	            while (reader.readRecord())  //逐行读入除表头的数据  
+	                csvList.add(reader.getValues());  
+	            reader.close();
+	        } else {  
+	            System.out.println("此文件不是CSV文件！");  
+	        }
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		int csvSize = csvList.size();
+		
+		for(int i=0;i<csvSize;i++) {
+			value.add(Long.parseLong(csvList.get(i)[index]));
+		}
+		return value;
+	}
 	/***
 	 * @Comments 将字符串a写入文件strFile
 	 *           替换掉原有部分
@@ -68,7 +100,23 @@ public class OperateFile {
 			e.printStackTrace();
 		}
 	}
-	
+	/****
+	 * @comments 写CSV文件
+	 * @param str
+	 * @param file
+	 */
+	public void writeFileToCsv(String[] str, String file) {
+		File f = new File(file);
+		try {
+			FileOutputStream filestream = new FileOutputStream(f,true);
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(filestream,Charset.forName("utf-8")));
+			CsvWriter cwriter = new CsvWriter(writer,',');
+			cwriter.writeRecord(str,false);
+			cwriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
 	/***
 	 * @Comments 清空文件
 	 * @Notice 并不删除文件，只是将文件清空
@@ -89,19 +137,17 @@ public class OperateFile {
 		}
 	}
 	
+	
 	//方法测试  
     public static void main(String[] args){  
+    	OperateFile opfl = new OperateFile();
         String filePath = "./src/data/log/";
-        String fileName = "Activity-Log-2017-09-07 .csv";
+        String fileName = "Answer-Activity-TimeDifference.csv";
         String strFile = filePath+fileName;
-        OperateFile of = new OperateFile();  
-        ArrayList<String[]> list = new ArrayList<String[]>();
-        list=of.readCsvFile(strFile);  
-        for(int i=0;i<list.size();i++) {
-        	String[] arrayCsv = list.get(i);
-        	for (int j=0;j<arrayCsv.length;j++) {
-        		System.out.println(arrayCsv[j]);
-        	}
+        ArrayList<Long> value=null;
+        value =opfl.readIndexColumn(4, strFile);
+        for(int i=0;i<value.size();i++) {
+        	System.out.print(value.get(i)+" ");
         }
     }  
 }

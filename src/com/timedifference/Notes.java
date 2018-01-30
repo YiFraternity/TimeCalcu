@@ -1,25 +1,23 @@
-package com.aatimedifference;
+package com.timedifference;
 
 import java.util.ArrayList;
 
 import com.publicPackage.OperateFile;
 import com.publicPackage.StuNumClassify;
 import com.publicPackage.Time;
-import com.math.Math;
 
-public class AnswerTimeCalcu {
-	
-	public AnswerTimeCalcu() {}
-	
+public class Notes {
+
+	public Notes() {}
 	/****
 	 * @comments 获得答案日志里的数据，所有数据都存放一个list中
 	 * @return 存放数据的list
 	 */
-	private ArrayList<String[]> getAnswerLog() {
+	protected ArrayList<String[]> getNotesLog() {
 		OperateFile opfl = new OperateFile();
 		ArrayList<String[]> arrResult = new ArrayList<String[]>();
 		String filePath = "./src/data/log/";
-        String fileName = "Answer-History-Log-2017-09-07.csv";
+        String fileName = "Student-Notes-2017-09-11.csv";
         String strFile = filePath+fileName;
         arrResult = opfl.readCsvFile(strFile);
         return arrResult;
@@ -28,7 +26,7 @@ public class AnswerTimeCalcu {
 	 * @comments 获取Activity日志里的数据，将数据存放在list中，返回
 	 * @return 存放Activity日志的list
 	 */
-	private ArrayList<String[]> getActivitlog(){
+	protected ArrayList<String[]> getActivitlog(){
         OperateFile opfl = new OperateFile();
 		ArrayList<String[]> arrResult = new ArrayList<String[]>();
 		String filePath = "./src/data/log/";
@@ -43,7 +41,7 @@ public class AnswerTimeCalcu {
 	 * @param list
 	 * @return 5/5-6/18的Activity的list
 	 */
-	private ArrayList<String[]> filterActivity(ArrayList<String[]>list){
+	protected ArrayList<String[]> filterActivity(ArrayList<String[]>list){
 		ArrayList<String[]> result = new ArrayList<String[]>();
 		Time t = new Time();
 		String lowerlimit = "2017-05-05 0:0:0";
@@ -63,11 +61,11 @@ public class AnswerTimeCalcu {
 		return result;
 	}
 	/****
-	 * @comments 过滤Answer时间，得到5/5-6/18的Answer
+	 * @comments 过滤Notes时间，得到5/5-6/18的Notes
 	 * @param list
-	 * @return 5/5-6/18的Answer的list
+	 * @return 5/5-6/18的Notes的list
 	 */
-	private ArrayList<String[]> filterAnswer(ArrayList<String[]>list){
+	protected ArrayList<String[]> filterNotes(ArrayList<String[]>list){
 		ArrayList<String[]> result = new ArrayList<String[]>();
 		Time t = new Time();
 		String lowerlimit = "2017-05-05 0:0:0";
@@ -76,7 +74,7 @@ public class AnswerTimeCalcu {
 		long lupper = t.timeTolong(upperlimit);
 		for(int i=0;i<list.size();i++) {
 			String[] eachlist = list.get(i);
-			String time = t.parseAnswerDateTime(eachlist);
+			String time = t.parseNotesDateTime(eachlist);
 			long ltime = t.timeTolong(time);
 			if((ltime>=llower)&&(ltime<=lupper)) {
 				result.add(eachlist);
@@ -91,7 +89,7 @@ public class AnswerTimeCalcu {
 	 * @param aat
 	 * @return 顺序从小到大一次排列
 	 */
-	private GetAATime[] timeSort(ArrayList<GetAATime> aat) {
+	protected GetAATime[] timeSort(ArrayList<GetAATime> aat) {
 		Time timeObject = new Time();
 		int length = aat.size();
 		GetAATime[] aaResult = new GetAATime[length];
@@ -123,7 +121,7 @@ public class AnswerTimeCalcu {
 	 * @param record
 	 * @return 封装的时间信息
 	 */
-	private GetAATime getRecord(int TAG,String[]record) {
+	protected GetAATime getRecord(int TAG,String[]record) {
 		Time timeObject = new Time();
 		String SN = record[0];
 		int QN = Integer.parseInt(record[1]);
@@ -132,7 +130,7 @@ public class AnswerTimeCalcu {
 			TIME = timeObject.parseActivityDateTime(record);
 		}else if(TAG == 1)
 		{
-			TIME = timeObject.parseAnswerDateTime(record);
+			TIME = timeObject.parseNotesDateTime(record);
 		}
 		GetAATime aa = new GetAATime(TAG,SN,QN,TIME);
 		return aa;
@@ -145,7 +143,7 @@ public class AnswerTimeCalcu {
 	 * @param aat
 	 * @param arrANS
 	 */
-	private void getACTLogWithANS(ArrayList<GetAATime>aat,String[] arrANS,ArrayList<ArrayList<String[]>> ACTarrange) {
+	protected void getACTLogWithANS(ArrayList<GetAATime>aat,String[] arrANS,ArrayList<ArrayList<String[]>> ACTarrange) {
         String SNofANS = arrANS[0];                  //答案里的学生序号
         int QNofANS = Integer.parseInt(arrANS[1]);   //答案数组里题号
         for(int i=0;i<ACTarrange.size();i++) {       //ACTarrange.size()代表有多少学生
@@ -166,36 +164,36 @@ public class AnswerTimeCalcu {
 	}
 	
 	/****
-	 * @comments 从Answer-History文件中找到与aarAns数据相同的序号和题目
+	 * @comments 从Notes-History文件中找到与aarAns数据相同的序号和题目
 	 *           将这些数据封装成GetAATime对象，添加到aat中
 	 * @param aat <存放GetAATime对象>
 	 * @param arrANS <答案数据的数组>
 	 * @param csvlist <存放CSV文件中的数据>
 	 */
-	private void getANSlist(ArrayList<GetAATime>aat,String[] arrANS,ArrayList<String[]>csvlist) {
+	protected void getANSlist(ArrayList<GetAATime>aat,String[] arrANS,ArrayList<String[]>csvlist) {
 		StuNumClassify snc = new StuNumClassify();
-        ArrayList<String[]>Answer = new ArrayList<String[]>();
-        Answer = snc.getSQClassfiy(csvlist, arrANS);
-		for(int i=0;i<Answer.size();i++) {
-			String[] eachAnswer = Answer.get(i);
-			GetAATime answerAA = getRecord(1,eachAnswer);
+        ArrayList<String[]>Notes = new ArrayList<String[]>();
+        Notes = snc.getSQClassfiy(csvlist, arrANS);
+		for(int i=0;i<Notes.size();i++) {
+			String[] eachNotes = Notes.get(i);
+			GetAATime answerAA = getRecord(1,eachNotes);
 			aat.add(answerAA);
 		}
 	}
 	
 	/***
-	 * @comments tag代表此时是Answer时间还是Activity时间
+	 * @comments tag代表此时是Notes时间还是Activity时间
 	 *           TAG=0 //Activity时间
-	 *           TAG=1 //Answer时间
+	 *           TAG=1 //Notes时间
 	 *           如果tag发生变化，从0->1(1->0)，则将变化之前加入
-	 *           判断最后一个是否为Activity时间，若为Activity时间，则不加入；若为Answer时间，则加入
+	 *           判断最后一个是否为Activity时间，若为Activity时间，则不加入；若为Notes时间，则加入
 	 * @example A={0,0,0,1,0,0,1,1,1,0}
 	 *          则取A[2],A[3],A[5],A[8]
 	 *          
 	 * @param allTime
-	 * @return 存放需要的Activity时间和Answer时间的动态数组
+	 * @return 存放需要的Activity时间和Notes时间的动态数组
 	 */
-	private ArrayList<GetAATime> getTimeofNeedCalcu(GetAATime[] allTime) {
+	protected ArrayList<GetAATime> getTimeofNeedCalcu(GetAATime[] allTime) {
 		ArrayList<GetAATime> resultTime = new ArrayList<GetAATime>();
 		int i=1;
 		for(;i<allTime.length;i++) {
@@ -211,78 +209,8 @@ public class AnswerTimeCalcu {
 		}
 		if(allTime[i-1].getTag() == 1)
 		{
-			resultTime.add(allTime[i-1]);//若最后一个是Answer时间，则加入
+			resultTime.add(allTime[i-1]);//若最后一个是Notes时间，则加入
 		}
 		return resultTime;
-	}
-	
-	/***
-	 * @comments 测试用例
-	 */
-	private static void test() {
-		AnswerTimeCalcu atc = new AnswerTimeCalcu();
-		StuNumClassify snc = new StuNumClassify();
-		ArrayList<String[]>answerlist = atc.getAnswerLog();
-		ArrayList<String[]>activitylist = atc.getActivitlog();
-		ArrayList<ArrayList<String[]>> actArrange = snc.getSNClassfiy(activitylist);
-		OperateFile opfl = new OperateFile();
-		String filename = "./src/data/log/Answer-Activity-TimeDifference.txt";
-		opfl.clearFile(filename);
-		ArrayList<GetAATime> aatlist = new ArrayList<GetAATime>();
-		String[] arrayAnswer = answerlist.get(14963);
-		atc.getANSlist(aatlist, arrayAnswer, answerlist);
-		atc.getACTLogWithANS(aatlist, arrayAnswer,actArrange);
-		GetAATime[] aatlistsort = atc.timeSort(aatlist);
-		ArrayList<GetAATime> aattime = atc.getTimeofNeedCalcu(aatlistsort);
-		for(int j=0;j<aattime.size();j++) {
-			GetAATime aat = aattime.get(j);
-			int QN = aat.getQN();
-			int TAG = aat.getTag();
-			String TIME = aat.getTime();
-			String SN = aat.getSN();
-			System.out.println(TAG+" "+SN+" "+QN+" "+TIME);
-			opfl.writeToFile(TAG+" "+SN+" "+QN+" "+TIME+"\n", filename);
-		}
-		aatlist = null;
-	}
-	public static void main(String[] args) {
-		AnswerTimeCalcu atc = new AnswerTimeCalcu();
-		StuNumClassify snc = new StuNumClassify();
-		Time timeObject = new Time();
-		ArrayList<String[]>answerlist = atc.getAnswerLog();
-		answerlist=atc.filterAnswer(answerlist);       //获取过滤后的list
-		ArrayList<String[]>activitylist = atc.getActivitlog();
-		activitylist=atc.filterActivity(activitylist); //获取过滤后的list
-		ArrayList<ArrayList<String[]>> actArrange = snc.getSNClassfiy(activitylist);
-		OperateFile opfl = new OperateFile();
-		String filename = "./src/data/log/Answer-Activity-TimeDifference.txt";
-		opfl.clearFile(filename);
-		while(!answerlist.isEmpty()) {
-			ArrayList<GetAATime> aatlist = new ArrayList<GetAATime>();
-			ArrayList<Long> list = new ArrayList<Long>();
-			String[] arrayAnswer = answerlist.get(0);
-			atc.getANSlist(aatlist, arrayAnswer, answerlist);
-			atc.getACTLogWithANS(aatlist, arrayAnswer,actArrange);
-			GetAATime[] aatlistsort = atc.timeSort(aatlist);
-			ArrayList<GetAATime> aattime = atc.getTimeofNeedCalcu(aatlistsort);
-			for(int j=0;j<aattime.size();j=j+2) {
-				GetAATime activityAAT= aattime.get(j);
-				int QN = activityAAT.getQN();
-				String actTIME = activityAAT.getTime();
-				String SN = activityAAT.getSN();
-				GetAATime answerAAT = aattime.get(j+1);
-				String ansTIME = answerAAT.getTime();
-				long timeDifference = timeObject.getTimeDifference(ansTIME, actTIME);
-				list.add(timeDifference);
-				String result = SN +","+ QN +","+actTIME+","+ansTIME+" "+timeDifference;
-				System.out.println(result);
-				opfl.writeToFile(result+"\n", filename);
-			}
-			Math math = new Math();
-			math.getAverage(list);
-			math.getVariance(list);
-			math.getMedian(list);
-			aatlist = null;
-		}
 	}
 }

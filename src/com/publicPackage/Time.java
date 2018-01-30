@@ -35,6 +35,21 @@ public class Time {
 		String time = strDate+" "+strTime;
 		return time;
 	}
+	
+	/***
+	 * @comments 获得Note-History-Log的时间
+	 * @param arrAnswer
+	 * @return
+	 */
+	public String parseNotesDateTime(String[] arrNotes) {
+		String strNotes = arrNotes[6];//时间格式：2017-03-09 06:14:08.786237+00:00
+		String[] arrLog = strNotes.split(" "); 
+		String strDate = arrLog[0];
+		String strMoment = arrLog[1]; 
+		String strTime = strMoment.substring(0, 8);//去掉"."后面的内容
+		String time = strDate+" "+strTime;
+		return time;
+	}
 	/****
 	 * @comments 将时间转化成long型，用于比较
 	 * @param time

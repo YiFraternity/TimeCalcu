@@ -3,9 +3,9 @@ package com.math;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class Math {
+public class Statistic {
 
-	public Math(){}
+	public Statistic(){}
 	
 	/****
 	 * @comments 计算一个list中的平均值
@@ -56,8 +56,9 @@ public class Math {
 	/****
 	 * @comments 求list的方差
 	 * @param list
+	 * @return 不超过两位小数的方差
 	 */
-	public void getVariance(ArrayList<Long>list) {
+	public String getVariance(ArrayList<Long>list) {
 		DecimalFormat df = new DecimalFormat("#.##");
 		String strVar = "";
 		double sum = 0;
@@ -68,26 +69,28 @@ public class Math {
 		double var = 0;
 		int listSize = list.size();
 		for(int i=0;i<listSize;i++) {
-			var = (list.get(i)-avg)*(list.get(i)-avg);
+			var = var+(list.get(i)-avg)*(list.get(i)-avg);
 		}
 		var = var/listSize;
+		var = Math.sqrt(var);
 		strVar = df.format(var);
 		System.out.println("方差为:"+strVar);
+		return strVar;
 	}
 	/***
 	 * @comments test用例
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Math math = new Math();
+		Statistic statistic = new Statistic();
 		long[] test = {50,60,100,58,68,89,90};
 		ArrayList<Long>list = new ArrayList<Long>();
 		for(int i=0;i<test.length;i++) {
 			list.add(test[i]);
 		}
-		math.getAverage(list);
+		statistic.getAverage(list);
 		//由于在求中位数时，把list清空，为了方便，先求方差
-		math.getVariance(list);
-		math.getMedian(list);
+		statistic.getVariance(list);
+		statistic.getMedian(list);
 	}
 }
