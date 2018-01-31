@@ -55,7 +55,7 @@ public class TimeCalcu {
 	 * @param allTime
 	 * @return 存放需要的Activity时间和Answer时间的动态数组
 	 */
-	protected ArrayList<PackageTime> getTimeofNeedCalcu(PackageTime[] allTime) {
+	private ArrayList<PackageTime> getTimeofNeedCalcu(PackageTime[] allTime) {
 		ArrayList<PackageTime> resultTime = new ArrayList<PackageTime>();
 		int i=1;
 		for(;i<allTime.length;i++) {
@@ -72,19 +72,40 @@ public class TimeCalcu {
 		return resultTime;
 	}
 	
+	private ArrayList<ArrayList<PackageTime>> getSegment(ArrayList<PackageTime>pt){
+		ArrayList<ArrayList<PackageTime>> seg = new ArrayList<ArrayList<PackageTime>>();
+		ArrayList<PackageTime> eachSeg = null;
+		for(int i=0;i<pt.size();i++) {
+			PackageTime eachpt =pt.get(i);
+			int tag = eachpt.getTag();
+			if(tag==0) {
+				if(eachSeg!=null)
+					seg.add(eachSeg);
+				eachSeg = new ArrayList<PackageTime>();
+				eachSeg.add(eachpt);
+			}else {
+				eachSeg.add(eachpt);
+			}
+		}
+		if(eachSeg!=null)
+			seg.add(eachSeg);
+		return seg;
+	}
+	
 	/***
-	 * @comments 求指定列的平均值，中位数，方差
+	 * @comments 求指定列的平均值，中位数，标准差
 	 */
 	private static void getAMV(int index, String file) {
 		OperateFile opfl = new OperateFile();
 		Statistic statistic = new Statistic();
 		String amvfile = "./src/data/log/AMV.csv";
-		String[] header = {"平均值","中位数","方差"};    //先写入标题头
+		opfl.clearFile(amvfile);
+		String[] header = {"平均值","中位数","标准差"};    //先写入标题头
 		String[] content = new String[3];
 		opfl.writeFileToCsv(header, amvfile);
 		ArrayList<Long>list = opfl.readIndexColumn(index, file);
 		String avg = statistic.getAverage(list);  //求平均值
-		String var = statistic.getVariance(list); //求方差
+		String var = statistic.getVariance(list); //求标准差
 		String med = statistic.getMedian(list);   //求中位数
 		content[0]=avg;content[1]=med;content[2]=var;
 		opfl.writeFileToCsv(content, amvfile);
@@ -107,47 +128,77 @@ public class TimeCalcu {
 		ArrayList<String[]>noteslist = note.getNotesLog(); //读取所有的Notes
 		noteslist=note.filterNotes(noteslist);             //获取过滤后Notes的list
 		
-		ArrayList<ArrayList<String[]>> actArrange = new ArrayList<ArrayList<String[]>>();
-		actArrange=snc.getSNClassfiy(activitylist);        //对activity进行整理
+		ArrayList<ArrayList<String[]>> ansArrange = new ArrayList<ArrayList<String[]>>();
+		ansArrange=snc.getSNClassfiy(answerlist);          //对answer进行整理
 		ArrayList<ArrayList<String[]>> noteArrange = new ArrayList<ArrayList<String[]>>();
 		noteArrange=snc.getSNClassfiy(noteslist);          //对note进行整理
 		
 		String filename = "./src/data/log/TimeDifference.csv";//将要写入结果的文件
 		opfl.clearFile(filename);
-		String[] header = {"学生序号","题号","Activity时间","Answer时间","Notes时间","AA时间差","NA时间差","较大时间差"};//先写入标题头
+		String[] header = {"学生序号","题号","Activity时间","Answer时间","Notes时间","AA时间差","NA时间差","最终时间差"};//先写入标题头
 		opfl.writeFileToCsv(header, filename);
 		
-		while(!answerlist.isEmpty()) {
+		while(!activitylist.isEmpty()) {
 			ArrayList<PackageTime> timelist = new ArrayList<PackageTime>();
-			ArrayList<Long> list = new ArrayList<Long>();
-			String[] arrayAnswer = answerlist.get(0);                  //得到学生序号
-			ans.getANSlist(timelist, arrayAnswer, answerlist);         //在Answer list中找到与此学生序号相同的数据，封装到timelist中
-			act.getACTLogWithANS(timelist, arrayAnswer,actArrange);    //在Activity list中找到与此学生序号相同的数据，封装到timelist中
-			note.getNotelogWithANS(timelist, arrayAnswer, noteArrange);//在Notes list中找到和此学生序号相同的数据，封装到timelist中
+			String[] actfirstlog = activitylist.get(0);                //得到第一条记录
+			act.getACTlist(timelist, actfirstlog, activitylist);       //在Answer list中找到与此学生序号相同的数据，封装到timelist中
+			ans.getANSlogWithACT(timelist, actfirstlog,ansArrange);    //在Activity list中找到与此学生序号相同的数据，封装到timelist中
+			note.getNotelogWithACT(timelist, actfirstlog, noteArrange);//在Notes list中找到和此学生序号相同的数据，封装到timelist中
 			PackageTime[] timelistsort = tc.timeSort(timelist);        //将timelist按照时间先后进行排序
 			ArrayList<PackageTime> changetime = tc.getTimeofNeedCalcu(timelistsort);//读取变化的时间点
-			String[] content=new String[7];
-			int QN=0; String SN="";int TAG;
-			for(int j=0;j<changetime.size();j=j+1) {
-				PackageTime thisTime= changetime.get(j);
-				QN = thisTime.getQN();
-				SN = thisTime.getSN();
-				TAG= thisTime.getTag();
-				String actTIME = activityAAT.getTime();
-				String ansTIME = answerAAT.getTime();
-				long timeDifference = timeObject.getTimeDifference(ansTIME, actTIME);
+			ArrayList<ArrayList<PackageTime>>seg = tc.getSegment(changetime);//将其进行分段
+			for(int i=0;i<seg.size();i++)
+			{
+				ArrayList<PackageTime>eachSeg = seg.get(i);   //每一段
+				int QN=0; String SN="";
+				SN = eachSeg.get(0).getSN();
+				QN = eachSeg.get(0).getQN();
+				String[] content=new String[8];
+				int TAG;
+				String thisActMoment = "";//此时的Activity时刻
+				String thisAnsMoment = "";//此时的Answer时刻
+				String thisNoteMoment= "";//此时的Note时刻
+				long AATD=0;              //Answer与Activity时间差
+				long NATD=0;              //Notes与Activity时间差
+				long TD = 0;              //两者中较大时间差
+				for(int j=0;j<eachSeg.size();j=j+1) {
+					PackageTime thisTime= eachSeg.get(j);
+					TAG= thisTime.getTag();
+					switch(TAG)
+					{
+					case 0:
+						thisActMoment = thisTime.getTime();
+						break;
+					case 1:
+						thisAnsMoment = thisTime.getTime();
+						AATD = timeObject.getTimeDifference(thisAnsMoment, thisActMoment);
+						break;
+					case 2:
+						thisNoteMoment= thisTime.getTime();
+						NATD = timeObject.getTimeDifference(thisNoteMoment, thisActMoment);
+						break;
+					default:
+						System.out.println("ERROR");
+						break;
+					}
+				}
+				TD = NATD>AATD?NATD:AATD;
 				String result="";
-				if(timeDifference<1283)
+				if(TD>0&&AATD<1577)
 				{
-					list.add(timeDifference);
-					result = SN +","+ QN +","+actTIME+","+ansTIME+","+timeDifference;
+					//打印学生序号,题号,Activity时间,Answer时间,Notes时间,Answer和Activity时间差,Notes时间差,最终时间差
+					result = SN +","+ QN +","+thisActMoment+","+thisAnsMoment+","+thisNoteMoment+","+AATD+","+NATD+","+TD;
 					System.out.println(result);
-					content[0]=SN;content[1]=""+QN;content[2]=actTIME;content[3]=ansTIME;content[4]=""+timeDifference;
+					content[0]=SN;content[1]=""+QN;
+					content[2]=thisActMoment;content[3]=thisAnsMoment;content[4]=thisNoteMoment;
+					content[5]=String.valueOf(AATD);content[6]=String.valueOf(NATD);content[7]=String.valueOf(TD);
 					opfl.writeFileToCsv(content, filename);
 				}
+				timelist = null;
 			}
-			timelist = null;
 		}
-		getAMV(4, filename);
+		
+		/*****求标准差，中位数，平均值*****/
+		getAMV(8,filename);
 	}
 }

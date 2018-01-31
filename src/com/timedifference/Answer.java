@@ -3,7 +3,6 @@ package com.timedifference;
 import java.util.ArrayList;
 
 import com.publicPackage.OperateFile;
-import com.publicPackage.StuNumClassify;
 import com.publicPackage.Time;
 
 public class Answer {
@@ -29,17 +28,12 @@ public class Answer {
 	 * @param record
 	 * @return 封装的时间信息
 	 */
-	protected PackageTime getRecord(int TAG,String[]record) {
+	private PackageTime getRecord(int TAG,String[]record) {
 		Time timeObject = new Time();
 		String SN = record[0];
 		int QN = Integer.parseInt(record[1]);
 		String TIME=null;
-		if(TAG == 0) {
-			TIME = timeObject.parseActivityDateTime(record);
-		}else if(TAG == 1)
-		{
-			TIME = timeObject.parseAnswerDateTime(record);
-		}
+		TIME = timeObject.parseAnswerDateTime(record);
 		PackageTime aa = new PackageTime(TAG,SN,QN,TIME);
 		return aa;
 	}
@@ -89,7 +83,7 @@ public class Answer {
         			String[] arrNote = eachStudentANS.get(j);
         			int QNofNote = Integer.parseInt(arrNote[1]);
         			if(QNofNote == QNofACT) {
-        				PackageTime getNoteLog = getRecord(2,arrNote);
+        				PackageTime getNoteLog = getRecord(1,arrNote);
         				aat.add(getNoteLog);
         			}
         		}

@@ -54,9 +54,9 @@ public class Statistic {
 		return med;
 	}
 	/****
-	 * @comments 求list的方差
+	 * @comments 求list的标准差
 	 * @param list
-	 * @return 不超过两位小数的方差
+	 * @return 不超过两位小数的标准差
 	 */
 	public String getVariance(ArrayList<Long>list) {
 		DecimalFormat df = new DecimalFormat("#.##");
@@ -74,7 +74,7 @@ public class Statistic {
 		var = var/listSize;
 		var = Math.sqrt(var);
 		strVar = df.format(var);
-		System.out.println("方差为:"+strVar);
+		System.out.println("标准差为:"+strVar);
 		return strVar;
 	}
 	/***
@@ -89,7 +89,7 @@ public class Statistic {
 			list.add(test[i]);
 		}
 		statistic.getAverage(list);
-		//由于在求中位数时，把list清空，为了方便，先求方差
+		//由于在求中位数时，把list清空，为了方便，先求标准差
 		statistic.getVariance(list);
 		statistic.getMedian(list);
 	}

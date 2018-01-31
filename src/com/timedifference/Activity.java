@@ -3,7 +3,6 @@ package com.timedifference;
 import java.util.ArrayList;
 
 import com.publicPackage.OperateFile;
-import com.publicPackage.StuNumClassify;
 import com.publicPackage.Time;
 
 public class Activity {
@@ -54,17 +53,12 @@ public class Activity {
 	 * @param record
 	 * @return 封装的时间信息
 	 */
-	protected PackageTime getRecord(int TAG,String[]record) {
+	private PackageTime getRecord(int TAG,String[]record) {
 		Time timeObject = new Time();
 		String SN = record[0];
 		int QN = Integer.parseInt(record[1]);
 		String TIME=null;
-		if(TAG == 0) {
-			TIME = timeObject.parseActivityDateTime(record);
-		}else if(TAG == 1)
-		{
-			TIME = timeObject.parseAnswerDateTime(record);
-		}
+		TIME = timeObject.parseActivityDateTime(record);
 		PackageTime aa = new PackageTime(TAG,SN,QN,TIME);
 		return aa;
 	}
@@ -76,14 +70,19 @@ public class Activity {
 	 * @param arrACT <答案数据的数组>
 	 * @param csvlist <存放CSV文件中的数据>
 	 */
-	protected void getACTlist(ArrayList<PackageTime>aat,String[] arrACT,ArrayList<String[]>csvlist) {
-		StuNumClassify snc = new StuNumClassify();
-        ArrayList<String[]>Answer = new ArrayList<String[]>();
-        Answer = snc.getSQClassfiy(csvlist, arrACT);
-		for(int i=0;i<Answer.size();i++) {
-			String[] eachAnswer = Answer.get(i);
-			PackageTime answerAA = getRecord(1,eachAnswer);
-			aat.add(answerAA);
+	protected void getACTlist(ArrayList<PackageTime>aat,String[]arrACT,ArrayList<String[]>csvlist) {
+		String SN = arrACT[0];
+		int QN = Integer.parseInt(arrACT[1]);
+		for(int i=0;i<csvlist.size();i++) {
+			String[] eachlist = csvlist.get(i);
+			String snlist = eachlist[0];
+			int qnlist = Integer.parseInt(eachlist[1]);
+			if(SN.equals(snlist)&&QN==qnlist) {
+				PackageTime pt = getRecord(0,eachlist);
+				aat.add(pt);
+				csvlist.remove(eachlist);
+				i--;
+			}
 		}
 	}
 }

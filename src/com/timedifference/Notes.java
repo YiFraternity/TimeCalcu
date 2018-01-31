@@ -53,17 +53,12 @@ public class Notes {
 	 * @param record
 	 * @return 封装的时间信息
 	 */
-	protected PackageTime getRecord(int TAG,String[]record) {
+	private PackageTime getRecord(int TAG,String[]record) {
 		Time timeObject = new Time();
 		String SN = record[0];
 		int QN = Integer.parseInt(record[1]);
 		String TIME=null;
-		if(TAG == 0) {
-			TIME = timeObject.parseActivityDateTime(record);
-		}else if(TAG == 1)
-		{
-			TIME = timeObject.parseNotesDateTime(record);
-		}
+		TIME = timeObject.parseNotesDateTime(record);
 		PackageTime aa = new PackageTime(TAG,SN,QN,TIME);
 		return aa;
 	}	

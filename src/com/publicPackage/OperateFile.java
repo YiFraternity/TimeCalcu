@@ -51,7 +51,7 @@ public class OperateFile {
 	 * @comments 读取CSV文件指定列的所有值
 	 * @param index
 	 * @param file
-	 * @return 
+	 * @return 将第index列的值存放到数组里返回
 	 */
 	public ArrayList<Long> readIndexColumn(int index,String file) {
 		ArrayList<String[]>csvList = new ArrayList<String[]>();
@@ -72,7 +72,7 @@ public class OperateFile {
 		int csvSize = csvList.size();
 		
 		for(int i=0;i<csvSize;i++) {
-			value.add(Long.parseLong(csvList.get(i)[index]));
+			value.add(Long.parseLong(csvList.get(i)[index-1]));
 		}
 		return value;
 	}
