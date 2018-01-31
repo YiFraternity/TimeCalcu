@@ -72,6 +72,13 @@ public class TimeCalcu {
 		return resultTime;
 	}
 	
+	/*****
+	 * @comments 将数据分段
+	 * @example {0 1 0 1 0 1 2 0 1 0 2 0 1}
+	 *        ->{{0 1},{0 1},{0 1 2},{0 1},{0 2},{0 1}}
+	 * @param pt
+	 * @return 分段后动态数组
+	 */
 	private ArrayList<ArrayList<PackageTime>> getSegment(ArrayList<PackageTime>pt){
 		ArrayList<ArrayList<PackageTime>> seg = new ArrayList<ArrayList<PackageTime>>();
 		ArrayList<PackageTime> eachSeg = null;
